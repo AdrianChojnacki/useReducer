@@ -43,14 +43,30 @@ const coursesReducer = (state, action) => {
     case 'REMOVE':
       return state.filter(course => course.id !== action.id);
     case 'FETCH':
-      return;
+      return action.data;
     default:
       throw new Error('Ooops something went wrong!');
   }
 }
 
+const fetchAsyncData = async () => {
+  await new Promise(resolve => setTimeout(resolve, 3000));
+}
+
 const App = () => {
-  const [state, dispatch] = useReducer(coursesReducer, samurajProgramowaniaCourses);
+  const [state, dispatch] = useReducer(coursesReducer, []);
+
+  const asyncFetch = async () => {
+    await fetchAsyncData();
+    dispatch({
+      type: 'FETCH',
+      data: samurajProgramowaniaCourses
+    });
+  };
+
+  useEffect(() => {
+    asyncFetch();
+  }, []);
 
   const coursesElements = state.map(course => (
     <CourseInfo
